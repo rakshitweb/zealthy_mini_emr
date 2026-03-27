@@ -12,11 +12,11 @@ logger = get_logger(__name__)
 Base.metadata.create_all(bind=engine)
 
 patients = [
-    Patient(name="Alice Johnson", email="alice.johnson@example.com", password="hashed_password_1"),
-    Patient(name="Bob Smith", email="bob.smith@example.com", password="hashed_password_2"),
-    Patient(name="Carol White", email="carol.white@example.com", password="hashed_password_3"),
-    Patient(name="David Brown", email="david.brown@example.com", password="hashed_password_4"),
-    Patient(name="Eva Martinez", email="eva.martinez@example.com", password="hashed_password_5"),
+    Patient(name="Alice Johnson", email="alice.johnson@example.com", password="alice"),
+    Patient(name="Bob Smith", email="bob.smith@example.com", password="bob"),
+    Patient(name="Carol White", email="carol.white@example.com", password="carlo"),
+    Patient(name="David Brown", email="david.brown@example.com", password="david"),
+    Patient(name="Eva Martinez", email="eva.martinez@example.com", password="eva"),
 ]
 
 appointments_data = [

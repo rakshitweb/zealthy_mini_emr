@@ -8,6 +8,7 @@ from config.Config import config
 from config.logger import setup_logger
 from db.database import Base, engine
 from db import load_all_models
+from middleware.auth_middleware import AuthMiddleware
 
 setup_logger()
 load_all_models()
@@ -22,6 +23,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(AuthMiddleware)
 
 for route in get_all_routers():
     app.include_router(route, prefix="/api/v1")
