@@ -24,7 +24,7 @@ def login(email: str, password: str, db: Session) -> dict:
         raise HTTPException(status_code=401, detail="Invalid email or password. Please try again.")
     token = create_access_token({"email": patient.email})
     logger.info(f"Login successful for patient id={patient.id}")
-    return {"access_token": token, "token_type": "bearer"}
+    return {"access_token": token, "token_type": "Bearer"}
 
 
 def get_current_patient(token: str, db: Session) -> Patient:

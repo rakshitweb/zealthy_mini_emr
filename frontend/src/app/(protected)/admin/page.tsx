@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { PatientsTableSkeleton, PatientTable } from "@/componenets";
+import { getPaginatedPatients } from "@/lib/patients";
 
 export const metadata: Metadata = {
     title: "Admin Portal - Mini EMR",
@@ -15,11 +16,22 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     const { page } = await searchParams;
     const currentPage = Math.max(1, parseInt(page ?? "1"));
 
+    let patients: Awaited<ReturnType<typeof getPaginatedPatients>>["patients"] = [];
+    let totalPages = 1;
+
+    try {
+        const data = await getPaginatedPatients(currentPage);
+        patients = data.patients;
+        totalPages = data.totalPages;
+    } catch (error) {
+        console.log(error);
+    }
+
     return (
         <main className="wrapper py-8">
             <h1 className="heading mb-6">Patients</h1>
             <Suspense fallback={<PatientsTableSkeleton />} key={currentPage}>
-                <PatientTable page={currentPage} />
+                <PatientTable page={currentPage} patients={patients} totalPages={totalPages} />
             </Suspense>
         </main>
     );

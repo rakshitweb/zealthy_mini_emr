@@ -34,6 +34,18 @@ def update_patient(patient_id: int, body: PatientUpdate, db: Session) -> Patient
     return patient
 
 
+def get_patients(page: int, page_size: int, db: Session) -> dict:
+    logger.info(f"Fetching patients page={page} page_size={page_size}")
+    total = db.query(Patient).count()
+    patients = db.query(Patient).offset((page - 1) * page_size).limit(page_size).all()
+    return {
+        "patients": patients,
+        "total": total,
+        "page": page,
+        "page_size": page_size
+    }
+
+
 def get_patient(patient_id: int, db: Session) -> Patient:
     logger.info(f"Fetching patient with id={patient_id}")
     patient = db.query(Patient).filter(Patient.id == patient_id).first()

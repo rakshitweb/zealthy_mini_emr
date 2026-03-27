@@ -9,7 +9,7 @@ class Config:
     RELOAD: str = os.getenv("RELOAD", "false").lower() == "true"
     JWT_SECRET: str = os.getenv("JWT_SECRET")
     JWT_ALGORITHM: str = "HS256"
-    JWT_EXPIRE_HOURS: int = 24
+    JWT_EXPIRE_HOURS: int = 0.01
     DB_ECHO: bool = os.getenv("DB_ECHO", "false").lower() == "true"
     
 config = Config()
