@@ -1,9 +1,10 @@
-from datetime import datetime, timedelta, timezone
+from datetime import date, timedelta
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from config.logger import get_logger
 from db.models.appointments import Appointment
+from db.models.prescriptions import Prescription
 from db.models.patients import Patient
 from db.schemas.patients import PatientCreate, PatientUpdate
 from .utils import find_next_occurrence
@@ -55,13 +56,26 @@ def get_patient(patient_id: int, db: Session) -> dict:
         logger.warning(f"Patient with id={patient_id} not found")
         raise HTTPException(status_code=404, detail="Patient not found")
 
-    now = datetime.now(timezone.utc)
-    end_date = now + timedelta(days=7)
+    today = date.today()
+    end_date_d = today + timedelta(days=7)
+
     all_appointments = db.query(Appointment).filter(Appointment.patient_id == patient_id).all()
-    upcoming = [
-        {**a.__dict__, "latest_occurrence": find_next_occurrence(a.datetime, a.repeat, now)}
+    upcoming_appointments = [
+        {**a.__dict__, "latest_occurrence": find_next_occurrence(a.datetime.date(), a.repeat, today)}
         for a in all_appointments
-        if find_next_occurrence(a.datetime, a.repeat, now) <= end_date
+        if find_next_occurrence(a.datetime.date(), a.repeat, today) <= end_date_d
     ]
 
-    return {**patient.__dict__, "appointments": upcoming}
+    all_prescriptions = (
+        db.query(Prescription)
+        .filter(Prescription.patient_id == patient_id)
+        .options(joinedload(Prescription.medication), joinedload(Prescription.dosage))
+        .all()
+    )
+    upcoming_prescriptions = [
+        {**p.__dict__, "medication": p.medication, "dosage": p.dosage, "latest_occurrence": find_next_occurrence(p.refill_on, p.refill_schedule, today)}
+        for p in all_prescriptions
+        if find_next_occurrence(p.refill_on, p.refill_schedule, today) <= end_date_d
+    ]
+
+    return {**patient.__dict__, "appointments": upcoming_appointments, "prescriptions": upcoming_prescriptions}

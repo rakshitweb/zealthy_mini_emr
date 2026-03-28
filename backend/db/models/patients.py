@@ -18,3 +18,4 @@ class Patient(Base):
     updated_on = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     appointments = relationship("Appointment", back_populates="patient")
+    prescriptions = relationship("Prescription", back_populates="patient")

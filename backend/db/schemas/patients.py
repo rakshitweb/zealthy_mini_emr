@@ -3,6 +3,7 @@ from typing import Optional, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from db.schemas.appointments import AppointmentResponse
+    from db.schemas.prescriptions import PrescriptionResponse
 
 
 class PatientCreate(BaseModel):
@@ -37,9 +38,11 @@ class PatientResponse(BaseModel):
     name: str
     email: str
     appointments: List["AppointmentResponse"] = []
+    prescriptions: List["PrescriptionResponse"] = []
 
     model_config = {"from_attributes": True}
 
 
 from db.schemas.appointments import AppointmentResponse
+from db.schemas.prescriptions import PrescriptionResponse
 PatientResponse.model_rebuild()

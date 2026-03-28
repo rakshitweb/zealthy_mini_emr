@@ -1,9 +1,7 @@
 import calendar
-from datetime import datetime, timedelta, timezone
+from datetime import date, timedelta
 
-def find_next_occurrence(start: datetime, repeat: str, now: datetime) -> datetime:
-    if start.tzinfo is None:
-        start = start.replace(tzinfo=timezone.utc)
+def find_next_occurrence(start: date, repeat: str, now: date) -> date:
     if start >= now:
         return start
     if repeat == "daily":
