@@ -2,11 +2,15 @@
 
 import { pagination } from "@/config/config";
 import { request } from "@/utils/request";
+import { getPatientIdFromToken } from "./token";
+import { redirect } from "next/navigation";
 
 export type Patient = {
   id: string;
   name: string;
   email: string;
+  appointments?: [];
+  prescriptions?: [];
 };
 
 export type PaginatedPatients = {
@@ -31,3 +35,13 @@ export async function getPaginatedPatients(
   return { patients: data.patients, total, page, pageSize, totalPages };
 }
 
+export async function getPatientDetails() {
+  const patientId = await getPatientIdFromToken();
+  if (!patientId) {
+    // Negative case. User will not be seeing this page if the token is not present
+    redirect("/login?expired=true");
+  }
+  const response = await request(`/patients/${patientId}`);
+  const data = await response.json();
+  return data;
+}

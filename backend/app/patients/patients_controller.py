@@ -1,12 +1,14 @@
+from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from config.logger import get_logger
+from db.models.appointments import Appointment
 from db.models.patients import Patient
 from db.schemas.patients import PatientCreate, PatientUpdate
+from .utils import find_next_occurrence
 
 logger = get_logger(__name__)
-
 
 def create_patient(body: PatientCreate, db: Session) -> Patient:
     logger.info(f"Creating patient with email={body.email}")
@@ -46,10 +48,20 @@ def get_patients(page: int, page_size: int, db: Session) -> dict:
     }
 
 
-def get_patient(patient_id: int, db: Session) -> Patient:
+def get_patient(patient_id: int, db: Session) -> dict:
     logger.info(f"Fetching patient with id={patient_id}")
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient:
         logger.warning(f"Patient with id={patient_id} not found")
         raise HTTPException(status_code=404, detail="Patient not found")
-    return patient
+
+    now = datetime.now(timezone.utc)
+    end_date = now + timedelta(days=7)
+    all_appointments = db.query(Appointment).filter(Appointment.patient_id == patient_id).all()
+    upcoming = [
+        {**a.__dict__, "latest_occurrence": find_next_occurrence(a.datetime, a.repeat, now)}
+        for a in all_appointments
+        if find_next_occurrence(a.datetime, a.repeat, now) <= end_date
+    ]
+
+    return {**patient.__dict__, "appointments": upcoming}

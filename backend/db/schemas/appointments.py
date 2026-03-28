@@ -22,5 +22,6 @@ class AppointmentResponse(BaseModel):
     provider: str
     datetime: datetime
     repeat: RepeatInterval
+    latest_occurrence: datetime
 
     model_config = {"from_attributes": True}
