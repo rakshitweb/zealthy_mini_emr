@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 type RequestOptions = {
   method?: "GET" | "POST" | "PUT" | "DELETE";
@@ -41,9 +42,11 @@ export const request = async (
     throw new Error("Unable to reach the server. Please try again.");
   }
 
-  if (response.status == 401) {
-    
+  if (response.status === 401) {
+    console.log(process.env)
+    redirect("/login?expired=true");
   }
+
   return response;
 };
 

@@ -1,7 +1,9 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { PatientsTableSkeleton, PatientTable } from "@/componenets";
+import { PatientsTableSkeleton, PatientTable, View } from "@/componenets";
 import { getPaginatedPatients } from "@/lib/patients";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
+import Image from "next/image";
 
 export const metadata: Metadata = {
     title: "Admin Portal - Mini EMR",
@@ -24,14 +26,17 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         patients = data.patients;
         totalPages = data.totalPages;
     } catch (error) {
-        console.log(error);
+        if (isRedirectError(error)) throw error;
     }
 
     return (
         <main className="wrapper py-8">
             <h1 className="heading mb-6">Patients</h1>
             <Suspense fallback={<PatientsTableSkeleton />} key={currentPage}>
-                <PatientTable page={currentPage} patients={patients} totalPages={totalPages} />
+                <PatientTable page={currentPage} patients={patients.map(patient => ({
+                    ...patient, actions: <div className="flex justify-center"><a><View />
+                    </a></div>
+                }))} totalPages={totalPages} />
             </Suspense>
         </main>
     );
