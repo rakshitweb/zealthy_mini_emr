@@ -38,8 +38,13 @@ export async function getPaginatedPatients(
   return { patients: data.patients, total, page, pageSize, totalPages };
 }
 
-export async function getPatientDetails(): Promise<Patient> {
-  const patientId = await getPatientIdFromToken();
+export async function updatePatient(id: string, body: { name?: string; email?: string }): Promise<Patient> {
+  const response = await request(`/patients/${id}`, { method: "PUT", body });
+  return response.json();
+}
+
+export async function getPatientDetails(id?: string): Promise<Patient> {
+  const patientId = id || await getPatientIdFromToken();
   if (!patientId) {
     // Negative case. User will not be seeing this page if the token is not present
     redirect("/login?expired=true");

@@ -1,11 +1,40 @@
 from datetime import date
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from config.logger import get_logger
 from db.models.appointments import Appointment
+from db.models.patients import Patient
+from db.schemas.appointments import AppointmentCreate, AppointmentUpdate
 from app.patients.utils import find_next_occurrence
 
 logger = get_logger(__name__)
+
+
+def create_appointment(patient_id: int, body: AppointmentCreate, db: Session) -> dict:
+    logger.info(f"Creating appointment for patient_id={patient_id}")
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    appointment = Appointment(**body.model_dump(), patient_id=patient_id)
+    db.add(appointment)
+    db.commit()
+    db.refresh(appointment)
+    today = date.today()
+    return {**appointment.__dict__, "latest_occurrence": find_next_occurrence(appointment.datetime.date(), appointment.repeat, today)}
+
+
+def update_appointment(appointment_id: int, body: AppointmentUpdate, db: Session) -> dict:
+    logger.info(f"Updating appointment id={appointment_id}")
+    appointment = db.query(Appointment).filter(Appointment.id == appointment_id).first()
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    for field, value in body.model_dump(exclude_none=True).items():
+        setattr(appointment, field, value)
+    db.commit()
+    db.refresh(appointment)
+    today = date.today()
+    return {**appointment.__dict__, "latest_occurrence": find_next_occurrence(appointment.datetime.date(), appointment.repeat, today)}
 
 
 def get_patient_appointments(patient_id: int, db: Session) -> list:

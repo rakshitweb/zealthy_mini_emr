@@ -1,3 +1,5 @@
+"use server";
+
 import { redirect } from "next/navigation";
 import { Repeat } from "./patients";
 import { getPatientIdFromToken } from "./token";
@@ -12,13 +14,29 @@ export type Appointment = {
   patient_id?: string;
 };
 
+export type AppointmentCreate = {
+  provider: string;
+  datetime: string;
+  repeat: Repeat;
+};
+
+export type AppointmentUpdate = Partial<AppointmentCreate>;
+
 export const getPatientAppointments = async () => {
   const patientId = await getPatientIdFromToken();
   if (!patientId) {
-    // Negative case. User will not be seeing this page if the token is not present
     redirect("/login?expired=true");
   }
   const response = await request(`/appointments/${patientId}`);
-  const data = await response.json();
-  return data;
+  return response.json();
+};
+
+export const createAppointment = async (patientId: string, body: AppointmentCreate): Promise<Appointment> => {
+  const response = await request(`/appointments/${patientId}`, { method: "POST", body });
+  return response.json();
+};
+
+export const updateAppointment = async (appointmentId: string, body: AppointmentUpdate): Promise<Appointment> => {
+  const response = await request(`/appointments/${appointmentId}`, { method: "PUT", body });
+  return response.json();
 };

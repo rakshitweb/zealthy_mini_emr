@@ -1,5 +1,24 @@
 from datetime import date, datetime
+from typing import Optional
 from pydantic import BaseModel
+from db.models.appointments import RepeatInterval
+
+
+class PrescriptionCreate(BaseModel):
+    patient_id: int
+    medication_id: int
+    dosage_id: int
+    quantity: int
+    refill_on: date
+    refill_schedule: RepeatInterval
+
+
+class PrescriptionUpdate(BaseModel):
+    medication_id: Optional[int] = None
+    dosage_id: Optional[int] = None
+    quantity: Optional[int] = None
+    refill_on: Optional[date] = None
+    refill_schedule: Optional[RepeatInterval] = None
 
 
 class MedicationResponse(BaseModel):

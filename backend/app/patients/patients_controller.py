@@ -25,7 +25,7 @@ def create_patient(body: PatientCreate, db: Session) -> Patient:
     return patient
 
 
-def update_patient(patient_id: int, body: PatientUpdate, db: Session) -> Patient:
+def update_patient(patient_id: int, body: PatientUpdate, db: Session) -> dict:
     logger.info(f"Updating patient with id={patient_id}")
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient:
@@ -34,8 +34,7 @@ def update_patient(patient_id: int, body: PatientUpdate, db: Session) -> Patient
     for field, value in body.model_dump(exclude_none=True).items():
         setattr(patient, field, value)
     db.commit()
-    db.refresh(patient)
-    return patient
+    return get_patient(patient_id, db)
 
 
 def get_patients(page: int, page_size: int, db: Session) -> dict:

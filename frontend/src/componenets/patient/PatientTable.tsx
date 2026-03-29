@@ -6,14 +6,15 @@ import { patientTableHeader } from "./utils";
 type PatientTableProps = {
   page: number;
   patients: Patient[];
-  totalPages: number
+  totalPages: number;
+  extraHeaders?: { name: string, label: string }[]
 };
 
-export const PatientTable = async ({ page, patients, totalPages }: PatientTableProps) => {
+export const PatientTable = async ({ extraHeaders = [], page, patients, totalPages }: PatientTableProps) => {
   return (
     <div>
       <div className="overflow-x-auto">
-        <Table headers={patientTableHeader} rows={patients} noDataText="No patients found." />
+        <Table headers={[...patientTableHeader, ...extraHeaders]} rows={patients} noDataText="No patients found." />
       </div>
       <Pagination page={page} totalPages={totalPages} />
     </div>

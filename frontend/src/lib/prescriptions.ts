@@ -1,3 +1,5 @@
+"use server";
+
 import { redirect } from "next/navigation";
 import { Repeat } from "./patients";
 import { getPatientIdFromToken } from "./token";
@@ -13,13 +15,31 @@ export type Prescription = {
   dosage: { id: number; value: string };
 };
 
+export type PrescriptionCreate = {
+  medication_id: number;
+  dosage_id: number;
+  quantity: number;
+  refill_on: string;
+  refill_schedule: Repeat;
+};
+
+export type PrescriptionUpdate = Partial<PrescriptionCreate>;
+
 export const getPatientPrescriptions = async () => {
   const patientId = await getPatientIdFromToken();
   if (!patientId) {
-    // Negative case. User will not be seeing this page if the token is not present
     redirect("/login?expired=true");
   }
   const response = await request(`/prescriptions/${patientId}`);
-  const data = await response.json();
-  return data;
+  return response.json();
+};
+
+export const createPrescription = async (patientId: string, body: PrescriptionCreate): Promise<Prescription> => {
+  const response = await request(`/prescriptions/${patientId}`, { method: "POST", body });
+  return response.json();
+};
+
+export const updatePrescription = async (prescriptionId: string, body: PrescriptionUpdate): Promise<Prescription> => {
+  const response = await request(`/prescriptions/${prescriptionId}`, { method: "PUT", body });
+  return response.json();
 };
