@@ -18,8 +18,8 @@ def get_patients_route(
 
 
 @router.get("/{patient_id}", response_model=PatientResponse)
-def get_patient_route(patient_id: int, db: Session = Depends(get_db)):
-    return get_patient(patient_id, db)
+def get_patient_route(patient_id: int, day_interval: int = Query(None), db: Session = Depends(get_db)):
+    return get_patient(patient_id, db, day_interval)
 
 
 @router.post("", response_model=PatientResponse, status_code=201)

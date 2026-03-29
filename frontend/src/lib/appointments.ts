@@ -38,5 +38,6 @@ export const createAppointment = async (patientId: string, body: AppointmentCrea
 
 export const updateAppointment = async (appointmentId: string, body: AppointmentUpdate): Promise<Appointment> => {
   const response = await request(`/appointments/${appointmentId}`, { method: "PUT", body });
-  return response.json();
+  const data = await response.json();
+  return data;
 };

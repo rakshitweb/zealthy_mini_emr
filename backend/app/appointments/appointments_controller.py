@@ -25,7 +25,7 @@ def create_appointment(patient_id: int, body: AppointmentCreate, db: Session) ->
 
 
 def update_appointment(appointment_id: int, body: AppointmentUpdate, db: Session) -> dict:
-    logger.info(f"Updating appointment id={appointment_id}")
+    logger.info(f"Updating appointment id={appointment_id}, body={body}")
     appointment = db.query(Appointment).filter(Appointment.id == appointment_id).first()
     if not appointment:
         raise HTTPException(status_code=404, detail="Appointment not found")

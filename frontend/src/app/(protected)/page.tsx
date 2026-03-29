@@ -5,7 +5,7 @@ import { generateAppointmentSequence, generatePrescriptionSequence } from "@/uti
 import { Suspense } from "react";
 
 export default async function HomePage() {
-    const patient = await getPatientDetails();
+    const patient = await getPatientDetails(undefined, 7);
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 7);
     const next_appointments = generateAppointmentSequence(patient.appointments || [], endDate, pagination.PAGE_SIZE);

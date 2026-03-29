@@ -1,11 +1,10 @@
-from datetime import date, datetime
+from datetime import date
 from typing import Optional
 from pydantic import BaseModel
 from db.models.appointments import RepeatInterval
 
 
 class PrescriptionCreate(BaseModel):
-    patient_id: int
     medication_id: int
     dosage_id: int
     quantity: int
@@ -42,6 +41,6 @@ class PrescriptionResponse(BaseModel):
     refill_schedule: str
     medication: MedicationResponse
     dosage: DosageResponse
-    latest_occurrence: datetime
+    latest_occurrence: date
 
     model_config = {"from_attributes": True}

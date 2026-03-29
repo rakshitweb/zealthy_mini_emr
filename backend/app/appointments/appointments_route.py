@@ -21,4 +21,5 @@ def create_appointment_route(patient_id: int, body: AppointmentCreate, db: Sessi
 
 @router.put("/{appointment_id}", response_model=AppointmentResponse)
 def update_appointment_route(appointment_id: int, body: AppointmentUpdate, db: Session = Depends(get_db)):
+    print(body)
     return update_appointment(appointment_id, body, db)
