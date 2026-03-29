@@ -11,6 +11,7 @@ from .utils import find_next_occurrence
 
 logger = get_logger(__name__)
 
+
 def create_patient(body: PatientCreate, db: Session) -> Patient:
     logger.info(f"Creating patient with email={body.email}")
     existing = db.query(Patient).filter(Patient.email == body.email).first()
@@ -41,12 +42,7 @@ def get_patients(page: int, page_size: int, db: Session) -> dict:
     logger.info(f"Fetching patients page={page} page_size={page_size}")
     total = db.query(Patient).count()
     patients = db.query(Patient).offset((page - 1) * page_size).limit(page_size).all()
-    return {
-        "patients": patients,
-        "total": total,
-        "page": page,
-        "page_size": page_size
-    }
+    return {"patients": patients, "total": total, "page": page, "page_size": page_size}
 
 
 def get_patient(patient_id: int, db: Session) -> dict:
@@ -59,9 +55,16 @@ def get_patient(patient_id: int, db: Session) -> dict:
     today = date.today()
     end_date_d = today + timedelta(days=7)
 
-    all_appointments = db.query(Appointment).filter(Appointment.patient_id == patient_id).all()
+    all_appointments = (
+        db.query(Appointment).filter(Appointment.patient_id == patient_id).all()
+    )
     upcoming_appointments = [
-        {**a.__dict__, "latest_occurrence": find_next_occurrence(a.datetime.date(), a.repeat, today)}
+        {
+            **a.__dict__,
+            "latest_occurrence": find_next_occurrence(
+                a.datetime.date(), a.repeat, today
+            ),
+        }
         for a in all_appointments
         if find_next_occurrence(a.datetime.date(), a.repeat, today) <= end_date_d
     ]
@@ -73,9 +76,20 @@ def get_patient(patient_id: int, db: Session) -> dict:
         .all()
     )
     upcoming_prescriptions = [
-        {**p.__dict__, "medication": p.medication, "dosage": p.dosage, "latest_occurrence": find_next_occurrence(p.refill_on, p.refill_schedule, today)}
+        {
+            **p.__dict__,
+            "medication": p.medication,
+            "dosage": p.dosage,
+            "latest_occurrence": find_next_occurrence(
+                p.refill_on, p.refill_schedule, today
+            ),
+        }
         for p in all_prescriptions
         if find_next_occurrence(p.refill_on, p.refill_schedule, today) <= end_date_d
     ]
 
-    return {**patient.__dict__, "appointments": upcoming_appointments, "prescriptions": upcoming_prescriptions}
+    return {
+        **patient.__dict__,
+        "appointments": upcoming_appointments,
+        "prescriptions": upcoming_prescriptions,
+    }

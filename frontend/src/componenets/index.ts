@@ -3,3 +3,5 @@ export * from "./patient";
 export * from "./pagination";
 export * from "./table";
 export * from "./icons";
+export * from "./appointments";
+export * from "./presecription";

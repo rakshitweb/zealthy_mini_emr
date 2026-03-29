@@ -4,27 +4,9 @@ import { pagination } from "@/config/config";
 import { request } from "@/utils/request";
 import { getPatientIdFromToken } from "./token";
 import { redirect } from "next/navigation";
+import { Appointment } from "./appointments";
 
 export type Repeat = "daily" | "weekly" | "monthly";
-
-export type Prescription = {
-  id: string;
-  quantity: number;
-  refill_on: string;
-  refill_schedule: Repeat;
-  latest_occurrence: string;
-  medication: { id: number; name: string };
-  dosage: { id: number; value: string };
-};
-
-export type Appointment = {
-  id: string;
-  provider: string;
-  datetime: Date;
-  repeat: Repeat;
-  latest_occurrence: Date;
-  patient_id?: string;
-}
 
 export type Patient = {
   id: string;

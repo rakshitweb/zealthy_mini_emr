@@ -1,5 +1,6 @@
 import { pagination } from "@/config/config";
-import { Appointment, Prescription, Repeat } from "@/lib/patients";
+import { Appointment } from "@/lib/appointments";
+import { Prescription, Repeat } from "@/lib/patients";
 
 const getNextDate = (current: Date, repeat: Repeat) => {
   const next = new Date(current);
@@ -13,6 +14,7 @@ const getNextDate = (current: Date, repeat: Repeat) => {
 export const generateAppointmentSequence = (
   appointments: Appointment[],
   endDate: Date,
+  page_size?: number,
 ) => {
   const results: {
     id: string;
@@ -32,7 +34,7 @@ export const generateAppointmentSequence = (
         next_date: new Date(current).toLocaleDateString(),
       });
 
-      if (results.length >= pagination.PAGE_SIZE) {
+      if (page_size && results.length >= page_size) {
         break;
       }
 
@@ -40,7 +42,7 @@ export const generateAppointmentSequence = (
       counter += 1;
     }
 
-    if (results.length >= pagination.PAGE_SIZE) {
+    if (page_size && results.length >= page_size) {
       break;
     }
   }
@@ -55,6 +57,7 @@ export const generateAppointmentSequence = (
 export const generatePrescriptionSequence = (
   presecription: Prescription[],
   endDate: Date,
+  page_size?: number,
 ) => {
   const results: {
     id: string;
@@ -78,15 +81,15 @@ export const generatePrescriptionSequence = (
         next_date: new Date(current).toLocaleDateString(),
       });
 
-      if (results.length >= pagination.PAGE_SIZE) {
+      if (page_size && results.length >= page_size) {
         break;
       }
 
       current = getNextDate(current, event.refill_schedule);
       counter += 1;
     }
-    
-    if (results.length >= pagination.PAGE_SIZE) {
+
+    if (page_size && results.length >= page_size) {
       break;
     }
   }

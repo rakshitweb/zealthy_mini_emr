@@ -33,10 +33,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         <main className="wrapper py-8">
             <h1 className="heading mb-6">Patients</h1>
             <Suspense fallback={<PatientsTableSkeleton />} key={currentPage}>
-                <PatientTable page={currentPage} patients={patients.map(patient => ({
-                    ...patient, actions: <div className="flex justify-center"><a><View />
-                    </a></div>
-                }))} totalPages={totalPages} />
+                <PatientTable page={currentPage} patients={patients} totalPages={totalPages} />
             </Suspense>
         </main>
     );

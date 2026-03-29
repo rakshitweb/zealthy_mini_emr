@@ -1,17 +1,17 @@
-import { Table } from "@/componenets";
+import { AppointmentsTableSkeleton, AppointmentTable, PrescriptionTable, PrescriptionTableSkeleton, Table } from "@/componenets";
 import { pagination } from "@/config/config";
 import { getPatientDetails } from "@/lib/patients";
 import { generateAppointmentSequence, generatePrescriptionSequence } from "@/utils/utils";
+import { Suspense } from "react";
 
 export default async function HomePage() {
     const patient = await getPatientDetails();
     const endDate = new Date();
-    console.log({patient})
     endDate.setDate(endDate.getDate() + 7);
-    const next_appointments = generateAppointmentSequence(patient.appointments || [], endDate);
+    const next_appointments = generateAppointmentSequence(patient.appointments || [], endDate, pagination.PAGE_SIZE);
 
-    const next_prescriptions = generatePrescriptionSequence(patient.prescriptions || [], endDate)
-    
+    const next_prescriptions = generatePrescriptionSequence(patient.prescriptions || [], endDate, pagination.PAGE_SIZE)
+
     return (
         <main className="wrapper py-8 flex flex-col gap-8">
             <div>
@@ -35,34 +35,22 @@ export default async function HomePage() {
 
             <section className="flex flex-wrap gap-4">
                 <div className="flex-1">
-                    <h2 className="subheading mb-4">Upcoming Appointments (Next 7 Days)</h2>
-                    <div className="overflow-x-auto">
-                        <Table
-                            headers={[
-                                { name: "provider", label: "Provider" },
-                                { name: "repeat", label: "Frequency" },
-                                { name: "next_date", label: "Next Date" },
-                            ]}
-                            rows={next_appointments}
-                            noDataText="No upcoming appointments in the next 7 days."
-                        />
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="subheading">Upcoming Appointments (Next 7 Days)</h2>
+                        <a href="/appointments">View More</a>
                     </div>
+                    <Suspense fallback={<AppointmentsTableSkeleton />}>
+                        <AppointmentTable appointments={next_appointments} />
+                    </Suspense>
                 </div>
                 <div className="flex-1">
-                    <h2 className="subheading mb-4">Upcoming Medications (Next 7 Days)</h2>
-                    <div className="overflow-x-auto">
-                        <Table
-                            headers={[
-                                { name: "medication", label: "Medication" },
-                                { name: "dosage", label: "Dosage" },
-                                { name: "repeat", label: "Frequency" },
-                                { name: "quantity", label: "Quantity" },
-                                { name: "next_date", label: "Next Date" },
-                            ]}
-                            rows={next_prescriptions}
-                            noDataText="No upcoming medication refills in the next 7 days."
-                        />
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="subheading">Upcoming Medications (Next 7 Days)</h2>
+                        <a href="/prescriptions">View More</a>
                     </div>
+                    <Suspense fallback={<PrescriptionTableSkeleton />}>
+                        <PrescriptionTable prescriptions={next_prescriptions} />
+                    </Suspense>
                 </div>
             </section>
             <p className="mt-4 caption">Note: Maximum showing {pagination.PAGE_SIZE} rows. To see complete list, please click on show more button.</p>
