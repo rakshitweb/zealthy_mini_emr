@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Patient, updatePatient } from "@/lib/patients";
-import { Appointment, createAppointment, updateAppointment } from "@/lib/appointments";
-import { Prescription, createPrescription, updatePrescription } from "@/lib/prescriptions";
+import { Appointment, createAppointment, updateAppointment, deleteAppointment } from "@/lib/appointments";
+import { Prescription, createPrescription, updatePrescription, deletePrescription } from "@/lib/prescriptions";
 import { Repeat } from "@/lib/patients";
 import { Medication, Dosage } from "@/lib/medications";
 
@@ -50,6 +50,11 @@ export const PatientEditForm = ({ patient, medications = [], dosages = [] }: Pro
         setEditingAppt(null);
     };
 
+    const handleDeleteAppt = async (id: string) => {
+        await deleteAppointment(id);
+        setAppointments(prev => prev.filter(a => a.id !== id));
+    };
+
     const handleCreateAppt = async () => {
         const created = await createAppointment(patient.id, newAppt);
         setAppointments(prev => [...prev, created]);
@@ -77,6 +82,11 @@ export const PatientEditForm = ({ patient, medications = [], dosages = [] }: Pro
         });
         setPrescriptions(prev => prev.map(p => p.id === id ? updated : p));
         setEditingRx(null);
+    };
+
+    const handleDeleteRx = async (id: string) => {
+        await deletePrescription(id);
+        setPrescriptions(prev => prev.filter(p => p.id !== id));
     };
 
     const handleCreateRx = async () => {
@@ -170,7 +180,10 @@ export const PatientEditForm = ({ patient, medications = [], dosages = [] }: Pro
                                         <span><span className="text-muted text-xs">Date </span>{new Date(a.datetime).toLocaleString()}</span>
                                         <span><span className="text-muted text-xs">Repeat </span>{a.repeat}</span>
                                     </div>
-                                    <button className="btn-secondary text-sm" onClick={() => startEditAppt(a)}>Edit</button>
+                                    <div className="flex gap-2">
+                                        <button className="btn-secondary text-sm" onClick={() => startEditAppt(a)}>Edit</button>
+                                        <button className="btn-danger text-sm" onClick={() => handleDeleteAppt(a.id)}>Delete</button>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -268,7 +281,10 @@ export const PatientEditForm = ({ patient, medications = [], dosages = [] }: Pro
                                         <span><span className="text-muted text-xs">Qty </span>{p.quantity}</span>
                                         <span><span className="text-muted text-xs">Refill </span>{p.refill_on} · {p.refill_schedule}</span>
                                     </div>
-                                    <button className="btn-secondary text-sm" onClick={() => startEditRx(p)}>Edit</button>
+                                    <div className="flex gap-2">
+                                        <button className="btn-secondary text-sm" onClick={() => startEditRx(p)}>Edit</button>
+                                        <button className="btn-danger text-sm" onClick={() => handleDeleteRx(p.id)}>Delete</button>
+                                    </div>
                                 </div>
                             )}
                         </div>

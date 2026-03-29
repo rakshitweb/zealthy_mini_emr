@@ -4,7 +4,7 @@ from typing import List
 
 from db.database import get_db
 from db.schemas.prescriptions import PrescriptionCreate, PrescriptionUpdate, PrescriptionResponse
-from .prescription_controller import get_patient_prescriptions, create_prescription, update_prescription
+from .prescription_controller import get_patient_prescriptions, create_prescription, update_prescription, delete_prescription
 
 router = APIRouter(prefix="/prescriptions", tags=["prescription"])
 
@@ -22,3 +22,8 @@ def create_prescription_route(patient_id: int, body: PrescriptionCreate, db: Ses
 @router.put("/{prescription_id}", response_model=PrescriptionResponse)
 def update_prescription_route(prescription_id: int, body: PrescriptionUpdate, db: Session = Depends(get_db)):
     return update_prescription(prescription_id, body, db)
+
+
+@router.delete("/{prescription_id}", status_code=204)
+def delete_prescription_route(prescription_id: int, db: Session = Depends(get_db)):
+    delete_prescription(prescription_id, db)

@@ -48,6 +48,15 @@ def update_prescription(prescription_id: int, body: PrescriptionUpdate, db: Sess
     return {**prescription.__dict__, "medication": prescription.medication, "dosage": prescription.dosage, "latest_occurrence": find_next_occurrence(prescription.refill_on, prescription.refill_schedule, today)}
 
 
+def delete_prescription(prescription_id: int, db: Session) -> None:
+    logger.info(f"Deleting prescription id={prescription_id}")
+    prescription = db.query(Prescription).filter(Prescription.id == prescription_id).first()
+    if not prescription:
+        raise HTTPException(status_code=404, detail="Prescription not found")
+    prescription.is_active = False
+    db.commit()
+
+
 def get_patient_prescriptions(patient_id: int, db: Session) -> list:
     logger.info(f"Fetching prescriptions for patient_id={patient_id}")
     today = date.today()
@@ -56,7 +65,7 @@ def get_patient_prescriptions(patient_id: int, db: Session) -> list:
 
     all_prescriptions = (
         db.query(Prescription)
-        .filter(Prescription.patient_id == patient_id)
+        .filter(Prescription.patient_id == patient_id, Prescription.is_active == True)
         .options(joinedload(Prescription.medication), joinedload(Prescription.dosage))
         .all()
     )

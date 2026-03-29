@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import { PatientsTableSkeleton, PatientTable, View } from "@/componenets";
 import { getPaginatedPatients } from "@/lib/patients";
+import { CreatePatientForm } from "./CreatePatientForm";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export const metadata: Metadata = {
@@ -30,8 +31,9 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
     return (
         <main className="wrapper py-8">
-            <div className="flex justify-between-items-center">
-                <h1 className="heading mb-6">Patients</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="heading">Patients</h1>
+                <CreatePatientForm />
             </div>
             <Suspense fallback={<PatientsTableSkeleton />} key={currentPage}>
                 <PatientTable extraHeaders={[{ name: "actions", label: "Actions" }]} page={currentPage} patients={patients.map(patient => ({

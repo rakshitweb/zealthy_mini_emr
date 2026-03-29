@@ -42,8 +42,7 @@ export const request = async (
     throw new Error("Unable to reach the server. Please try again.");
   }
 
-  if (response.status === 401) {
-    console.log(process.env)
+  if (response.status === 401 && url_path !== "/auth/login") {
     redirect("/login?expired=true");
   }
 

@@ -54,7 +54,7 @@ def get_patient(patient_id: int, db: Session, day_interval: int = None) -> dict:
     today = date.today()
     end_date_d = today + timedelta(days=day_interval) if day_interval is not None else None
 
-    all_appointments = db.query(Appointment).filter(Appointment.patient_id == patient_id).all()
+    all_appointments = db.query(Appointment).filter(Appointment.patient_id == patient_id, Appointment.is_active == True).all()
     appointments = [
         {**a.__dict__, "latest_occurrence": find_next_occurrence(a.datetime.date(), a.repeat, today)}
         for a in all_appointments
@@ -63,7 +63,7 @@ def get_patient(patient_id: int, db: Session, day_interval: int = None) -> dict:
 
     all_prescriptions = (
         db.query(Prescription)
-        .filter(Prescription.patient_id == patient_id)
+        .filter(Prescription.patient_id == patient_id, Prescription.is_active == True)
         .options(joinedload(Prescription.medication), joinedload(Prescription.dosage))
         .all()
     )

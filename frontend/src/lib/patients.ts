@@ -38,6 +38,13 @@ export async function getPaginatedPatients(
   return { patients: data.patients, total, page, pageSize, totalPages };
 }
 
+export async function createPatient(
+  body: { name: string; email: string; password: string },
+): Promise<Patient> {
+  const response = await request("/patients", { method: "POST", body });
+  return response.json();
+}
+
 export async function updatePatient(
   id: string,
   body: { name?: string; email?: string },

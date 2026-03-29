@@ -43,3 +43,7 @@ export const updatePrescription = async (prescriptionId: string, body: Prescript
   const response = await request(`/prescriptions/${prescriptionId}`, { method: "PUT", body });
   return response.json();
 };
+
+export const deletePrescription = async (prescriptionId: string): Promise<void> => {
+  await request(`/prescriptions/${prescriptionId}`, { method: "DELETE" });
+};

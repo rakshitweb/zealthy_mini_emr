@@ -1,5 +1,5 @@
 import enum
-from sqlalchemy import Column, Integer, String, DateTime, Enum, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, DateTime, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 from db.database import Base
 
@@ -18,5 +18,6 @@ class Appointment(Base):
     provider = Column(String, nullable=False)
     datetime = Column(DateTime, nullable=False)
     repeat = Column(Enum(RepeatInterval), nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
 
     patient = relationship("Patient", back_populates="appointments")

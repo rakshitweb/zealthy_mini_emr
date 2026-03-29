@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Enum, Date, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, Enum, Date, ForeignKey
 from sqlalchemy.orm import relationship
 from db.database import Base
 from .appointments import RepeatInterval
@@ -14,6 +14,7 @@ class Prescription(Base):
     quantity = Column(Integer, nullable=False)
     refill_on = Column(Date, nullable=False)
     refill_schedule = Column(Enum(RepeatInterval), nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
 
     patient = relationship("Patient", back_populates="prescriptions")
     medication = relationship("Medication")

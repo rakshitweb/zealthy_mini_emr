@@ -41,3 +41,7 @@ export const updateAppointment = async (appointmentId: string, body: Appointment
   const data = await response.json();
   return data;
 };
+
+export const deleteAppointment = async (appointmentId: string): Promise<void> => {
+  await request(`/appointments/${appointmentId}`, { method: "DELETE" });
+};
