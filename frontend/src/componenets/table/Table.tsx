@@ -18,7 +18,7 @@ type TableProps = {
 
 export const Table = ({ className, headers, rows = [], noDataText, rowClassName }: TableProps) => {
     return (
-        <table className={`w-full border-collapse border border-border text-sm ${className ?? ""}`}>
+        <table className={`w-full rounded-md border-collapse border border-border text-sm ${className ?? ""}`}>
             <thead>
                 <tr className="text-left">
                     {headers.map((header) => (

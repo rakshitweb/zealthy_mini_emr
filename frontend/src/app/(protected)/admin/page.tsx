@@ -31,7 +31,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
     return (
         <main className="wrapper py-8">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
                 <h1 className="heading">Patients</h1>
                 <CreatePatientForm />
             </div>
