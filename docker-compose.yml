@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mini_emr
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/mini_emr
+      PORT: 8000
+      RELOAD: "False"
+      JWT_SECRET: mini_emr_project_secret
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      BACKEND_URL: http://backend:8000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
