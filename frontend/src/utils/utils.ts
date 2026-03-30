@@ -1,6 +1,6 @@
-import { pagination } from "@/config/config";
 import { Appointment } from "@/lib/appointments";
-import { Prescription, Repeat } from "@/lib/patients";
+import { Repeat } from "@/lib/patients";
+import { Prescription } from "@/lib/prescriptions";
 
 const getNextDate = (current: Date, repeat: Repeat) => {
   const next = new Date(current);

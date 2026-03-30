@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { login } from "@/lib/auth";
 
@@ -12,6 +12,14 @@ const getCookie = (name: string) => {
 };
 
 export default function LoginPage() {
+    return (
+        <Suspense>
+            <LoginForm />
+        </Suspense>
+    );
+}
+
+function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -77,7 +85,7 @@ export default function LoginPage() {
                     <button
                         type={loading ? "button" : "submit"}
                         disabled={loading}
-                        className="text-white rounded px-4 py-2 text-sm font-medium cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="btn-secondary rounded px-4 py-2 text-sm font-medium cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {loading ? "Loading..." : "Sign in"}
                     </button>
